@@ -45,7 +45,6 @@ function applyFilters(dogs, filters) {
 
 function HundePageInner() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [allDogs, setAllDogs] = useState([]);
   const [scrapedAt, setScrapedAt] = useState(null);
