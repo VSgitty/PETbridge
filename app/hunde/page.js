@@ -1,10 +1,10 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DogCard from '@/components/DogCard';
 import FilterBar from '@/components/FilterBar';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 function applyFilters(dogs, filters) {
   let result = [...dogs];
@@ -43,7 +43,7 @@ function applyFilters(dogs, filters) {
   return result;
 }
 
-export default function HundePage() {
+function HundePageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -210,5 +210,24 @@ export default function HundePage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function HundePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4" />
+            <p className="text-slate-500">Wird geladen…</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    }>
+      <HundePageInner />
+    </Suspense>
   );
 }

@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { readCache } from '@/lib/cache';
 import { fetchGelnhausenDetail } from '@/lib/scrapers/gelnhausen';
 import { notFound } from 'next/navigation';
+import { DogImage, DogThumbnail } from './DogDetailClient';
 
 export const revalidate = 3600;
 
@@ -67,16 +68,7 @@ export default async function DogDetailPage({ params }) {
           <div className="lg:col-span-3 space-y-4">
             {/* Main image */}
             <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-50 to-violet-50 aspect-[4/3] shadow-xl">
-              {allImages.length > 0 ? (
-                <img
-                  src={allImages[0]}
-                  alt={dog.name}
-                  className="w-full h-full object-cover"
-                  onError={e => { e.target.style.display='none'; }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-8xl opacity-20">🐶</div>
-              )}
+              <DogImage src={allImages[0] || null} alt={dog.name} />
 
               {/* Status overlay */}
               <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-full border text-sm font-semibold ${s.color}`}>
@@ -89,12 +81,7 @@ export default async function DogDetailPage({ params }) {
               <div className="grid grid-cols-4 gap-2">
                 {allImages.slice(1, 5).map((img, i) => (
                   <div key={i} className="rounded-xl overflow-hidden aspect-square bg-slate-100">
-                    <img
-                      src={img}
-                      alt={`${dog.name} Foto ${i + 2}`}
-                      className="w-full h-full object-cover hover:opacity-80 transition-opacity cursor-pointer"
-                      onError={e => { e.target.style.display='none'; }}
-                    />
+                    <DogThumbnail src={img} alt={`${dog.name} Foto ${i + 2}`} />
                   </div>
                 ))}
               </div>
@@ -156,7 +143,7 @@ export default async function DogDetailPage({ params }) {
               )}
               {dog.shelterEmail && (
                 <a
-                  href={`mailto:${dog.shelterEmail}?subject=Anfrage zu ${dog.name}&body=Hallo, ich interessiere mich für ${dog.name} (PetBridge ID: ${dog.id}).`}
+                  href={`mailto:${dog.shelterEmail}?subject=Anfrage%20zu%20${encodeURIComponent(dog.name)}`}
                   className="flex items-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white/20 hover:bg-white/30 text-white font-semibold text-sm mb-2 transition-colors"
                 >
                   ✉️ E-Mail schreiben

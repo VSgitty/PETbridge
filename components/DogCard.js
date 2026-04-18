@@ -1,5 +1,5 @@
+'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 
 const STATUS_CONFIG = {
   available: { label: 'Sucht Zuhause', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
