@@ -23,10 +23,10 @@ export default function DogCard({ dog }) {
   return (
     <Link
       href={href}
-      className="dog-card group block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+      className="dog-card group block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
     >
       {/* ── IMAGE AREA ── */}
-      <div className="relative h-56 bg-gradient-to-br from-indigo-50 to-violet-100 overflow-hidden">
+      <div className="relative h-36 sm:h-44 bg-gradient-to-br from-indigo-50 to-violet-100 overflow-hidden">
         {dog.image ? (
           <img
             src={dog.image}
@@ -37,66 +37,56 @@ export default function DogCard({ dog }) {
             onError={e => { e.target.style.display = 'none'; }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-7xl opacity-20">🐶</div>
+          <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">🐶</div>
         )}
 
         {/* Gradient overlay at bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent" />
 
         {/* Dog name in bottom-left */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-          <h3 className="font-extrabold text-xl text-white drop-shadow-lg leading-tight">
+        <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
+          <h3 className="font-extrabold text-sm sm:text-base text-white drop-shadow-lg leading-tight">
             {dog.name}
           </h3>
           {/* Ort badge */}
           {dog.shelterCity && (
-            <span className="shrink-0 ml-2 flex items-center gap-1 px-2.5 py-1 rounded-full
-              bg-white/25 backdrop-blur-sm text-white text-xs font-semibold border border-white/30">
+            <span className="shrink-0 ml-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full
+              bg-white/25 backdrop-blur-sm text-white text-[10px] font-semibold border border-white/30">
               📍 {dog.shelterCity}
             </span>
           )}
         </div>
 
         {/* Status badge top-left */}
-        <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1
-          rounded-full text-xs font-semibold ${s.color} shadow-sm`}>
+        <div className={`absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5
+          rounded-full text-[10px] font-semibold ${s.color} shadow-sm`}>
           <span className={`w-1.5 h-1.5 rounded-full ${s.dot} pulse-dot`} />
           {s.label}
         </div>
       </div>
 
       {/* ── CONTENT ── */}
-      <div className="p-4">
+      <div className="p-2.5">
         {/* Shelter name */}
-        <p className="text-xs text-indigo-400 font-semibold mb-3 truncate">{dog.shelter}</p>
+        <p className="text-[10px] text-indigo-400 font-semibold mb-1.5 truncate">{dog.shelter}</p>
 
-        {/* Facts grid */}
+        {/* Facts: max 2 on mobile, up to 4 otherwise */}
         {facts.length > 0 && (
-          <div className="grid grid-cols-2 gap-1.5 mb-3">
-            {facts.map((f, i) => (
-              <div key={i} className="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1.5">
-                <span className="text-sm shrink-0">{f.icon}</span>
-                <span className="text-xs text-slate-600 truncate font-medium">{f.label}</span>
+          <div className="grid grid-cols-2 gap-1 mb-2">
+            {facts.slice(0, 2).map((f, i) => (
+              <div key={i} className="flex items-center gap-1 bg-slate-50 rounded-md px-1.5 py-1">
+                <span className="text-xs shrink-0">{f.icon}</span>
+                <span className="text-[10px] text-slate-600 truncate font-medium">{f.label}</span>
               </div>
             ))}
           </div>
         )}
 
-        {/* Description snippet */}
-        {dog.description && (
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">
-            {dog.description}
-          </p>
-        )}
-
         {/* CTA footer */}
-        <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-xs text-slate-400">
-            {dog.postedDate || dog.since || ''}
-          </span>
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600
-            group-hover:gap-2 transition-all">
-            Kennenlernen <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+        <div className="pt-1.5 border-t border-slate-100 flex items-center justify-end">
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600
+            group-hover:gap-1.5 transition-all">
+            Profil <span className="group-hover:translate-x-0.5 transition-transform">→</span>
           </span>
         </div>
       </div>

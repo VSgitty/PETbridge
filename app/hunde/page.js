@@ -43,6 +43,8 @@ function applyFilters(dogs, filters) {
   return result;
 }
 
+const PAGE_SIZE = 24;
+
 function HundePageInner() {
   const searchParams = useSearchParams();
 
@@ -60,6 +62,7 @@ function HundePageInner() {
     size: searchParams.get('size') || '',
     sort: searchParams.get('sort') || 'newest',
   });
+  const [page, setPage] = useState(1);
 
   // Fetch dogs on mount
   useEffect(() => {
@@ -79,6 +82,7 @@ function HundePageInner() {
 
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
+    setPage(1);
   }, []);
 
   // Manual scrape trigger
@@ -236,13 +240,62 @@ function HundePageInner() {
         )}
 
         {/* Dog grid */}
-        {!loading && filteredDogs.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDogs.map(dog => (
-              <DogCard key={dog.id} dog={dog} />
-            ))}
-          </div>
-        )}
+        {!loading && filteredDogs.length > 0 && (() => {
+          const totalPages = Math.ceil(filteredDogs.length / PAGE_SIZE);
+          const pageDogs = filteredDogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+          return (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                {pageDogs.map(dog => (
+                  <DogCard key={dog.id} dog={dog} />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8 flex-wrap">
+                  <button
+                    onClick={() => { setPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-colors disabled:opacity-40"
+                  >
+                    ← Zurück
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 2)
+                    .reduce((acc, n, idx, arr) => {
+                      if (idx > 0 && arr[idx - 1] !== n - 1) acc.push('…');
+                      acc.push(n);
+                      return acc;
+                    }, [])
+                    .map((n, i) =>
+                      n === '…' ? (
+                        <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm">…</span>
+                      ) : (
+                        <button
+                          key={n}
+                          onClick={() => { setPage(n); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                          className={`w-10 h-10 rounded-xl text-sm font-bold transition-colors ${
+                            n === page
+                              ? 'bg-indigo-600 text-white shadow-md'
+                              : 'border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
+                          }`}
+                        >
+                          {n}
+                        </button>
+                      )
+                    )
+                  }
+                  <button
+                    onClick={() => { setPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-colors disabled:opacity-40"
+                  >
+                    Weiter →
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        })()}
 
       </main>
 

@@ -182,13 +182,13 @@ export default async function HomePage() {
             Klicke auf ein Tierheim, um alle dortigen Hunde zu sehen oder die Website direkt zu besuchen.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {ALL_SHELTERS.map(s => {
             const count = dogs.filter(d => d.shelterCity === s.city).length;
             return (
-              <div key={s.city} className="shelter-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+              <div key={s.city} className="shelter-card bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                 {/* City banner image */}
-                <div className="relative h-36 overflow-hidden bg-slate-200">
+                <div className="relative h-24 overflow-hidden bg-slate-200">
                   {cityImages[s.id] ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
@@ -198,33 +198,25 @@ export default async function HomePage() {
                     />
                   ) : (
                     <div className={`w-full h-full bg-gradient-to-br ${s.color} flex items-center justify-center`}>
-                      <span className="text-5xl">{s.emoji}</span>
+                      <span className="text-3xl">{s.emoji}</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                  <span className={`absolute bottom-2 left-3 text-[11px] font-bold uppercase tracking-widest text-white/90`}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute bottom-1.5 left-2 text-[10px] font-bold uppercase tracking-wider text-white/95">
                     {s.city}
                   </span>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-slate-900 mb-0.5 text-sm">{s.name}</h3>
-                  <p className="text-xs text-slate-500 mb-3">
-                    {count > 0 ? `${count} Hunde auf PetBridge` : 'Website besuchen →'}
+                <div className="p-2.5">
+                  <h3 className="font-bold text-slate-900 text-xs leading-tight mb-1 line-clamp-2">{s.name}</h3>
+                  <p className="text-[11px] text-slate-500 mb-2">
+                    {count > 0 ? `${count} Hunde` : '–'}
                   </p>
-                  {s.phone && (
-                    <a
-                      href={`tel:${s.phone.replace(/[\s/]/g, '')}`}
-                      className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-indigo-600 mb-3 transition-colors"
-                    >
-                      📞 {s.phone}
-                    </a>
-                  )}
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-1.5">
                     {count > 0 && (
                       <Link
                         href={`/hunde?shelter=${s.city}`}
-                        className="flex-1 text-center py-2 rounded-xl bg-indigo-50 text-indigo-700
-                          text-xs font-semibold hover:bg-indigo-100 transition-colors"
+                        className="flex-1 text-center py-1.5 rounded-lg bg-indigo-50 text-indigo-700
+                          text-[11px] font-semibold hover:bg-indigo-100 transition-colors"
                       >
                         Hunde ({count})
                       </Link>
@@ -233,10 +225,10 @@ export default async function HomePage() {
                       href={s.shelterUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center py-2 rounded-xl border border-slate-200 text-slate-600
-                        text-xs font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+                      className="flex-1 text-center py-1.5 rounded-lg border border-slate-200 text-slate-600
+                        text-[11px] font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-colors"
                     >
-                      Website →
+                      Web →
                     </a>
                   </div>
                 </div>
