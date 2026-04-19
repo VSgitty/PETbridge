@@ -9,6 +9,34 @@ import { ALL_SHELTERS } from '@/lib/shelterConfig';
 
 export const revalidate = 3600;
 
+/** Fetch Wikipedia thumbnail for a single city (German Wikipedia). */
+async function getCityThumbnail(wikiTitle) {
+  try {
+    const res = await fetch(
+      `https://de.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
+      { next: { revalidate: 86400 } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.thumbnail?.source || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch thumbnails for all shelters in parallel. Returns { [id]: url|null } */
+async function getCityImages(shelters) {
+  const results = await Promise.allSettled(
+    shelters.map(s => getCityThumbnail(s.wikiTitle))
+  );
+  return Object.fromEntries(
+    shelters.map((s, i) => [
+      s.id,
+      results[i].status === 'fulfilled' ? results[i].value : null,
+    ])
+  );
+}
+
 async function getDogs() {
   try {
     let cache = await readCache().catch(() => ({ dogs: [], scrapedAt: null }));
@@ -30,6 +58,7 @@ async function getDogs() {
 
 export default async function HomePage() {
   const { dogs, scrapedAt } = await getDogs();
+  const cityImages = await getCityImages(ALL_SHELTERS);
 
   const newest = [...dogs]
     .sort((a, b) => new Date(b.scrapedAt) - new Date(a.scrapedAt))
@@ -158,11 +187,26 @@ export default async function HomePage() {
             const count = dogs.filter(d => d.shelterCity === s.city).length;
             return (
               <div key={s.city} className="shelter-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                <div className={`h-2 bg-gradient-to-r ${s.color}`} />
-                <div className="p-5">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-2xl shadow-md mb-4`}>
-                    {s.emoji}
-                  </div>
+                {/* City banner image */}
+                <div className="relative h-36 overflow-hidden bg-slate-200">
+                  {cityImages[s.id] ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={cityImages[s.id]}
+                      alt={`${s.city} Stadtbild`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className={`w-full h-full bg-gradient-to-br ${s.color} flex items-center justify-center`}>
+                      <span className="text-5xl">{s.emoji}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                  <span className={`absolute bottom-2 left-3 text-[11px] font-bold uppercase tracking-widest text-white/90`}>
+                    {s.city}
+                  </span>
+                </div>
+                <div className="p-4">
                   <h3 className="font-bold text-slate-900 mb-0.5 text-sm">{s.name}</h3>
                   <p className="text-xs text-slate-500 mb-3">
                     {count > 0 ? `${count} Hunde auf PetBridge` : 'Website besuchen →'}
