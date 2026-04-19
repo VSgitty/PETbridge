@@ -112,12 +112,31 @@ function HundePageInner() {
       {/* Page header */}
       <div className="hero-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-4xl font-extrabold text-white mb-2">
-            🐕 Alle Hunde
-          </h1>
-          <p className="text-indigo-200">
-            {allDogs.length} Hunde aus 4 Tierheimen — täglich aktuell via Web-Scraping
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p className="text-indigo-300 text-sm font-semibold uppercase tracking-wider mb-2">🐕 Alle Hunde</p>
+              <h1 className="text-4xl font-extrabold text-white mb-1">
+                Hunde aus 4 Tierheimen
+              </h1>
+              <p className="text-indigo-300 text-sm">
+                {allDogs.length > 0 ? `${allDogs.length} Hunde verfügbar — täglich aktualisiert` : 'Wird geladen…'}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href="/hunde?status=available"
+                className="px-4 py-2 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-200 text-sm font-semibold hover:bg-amber-400/30 transition-colors"
+              >
+                🏠 Adoptieren
+              </a>
+              <a
+                href="/spenden"
+                className="px-4 py-2 rounded-xl bg-emerald-400/20 border border-emerald-400/40 text-emerald-200 text-sm font-semibold hover:bg-emerald-400/30 transition-colors"
+              >
+                💚 Spenden
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -171,25 +190,45 @@ function HundePageInner() {
           <div className="text-center py-24 bg-white rounded-2xl border border-slate-200 shadow-sm">
             <div className="text-5xl mb-4">🐾</div>
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Noch keine Daten</h2>
-            <p className="text-slate-500 mb-6">Starte den ersten Scrape um alle Hunde zu laden.</p>
+            <p className="text-slate-500 mb-6 max-w-md mx-auto text-sm">
+              Beim ersten Start müssen die Tierheim-Daten erst abgerufen werden.
+              Das dauert 1–2 Minuten.
+            </p>
             <button
               onClick={triggerScrape}
               disabled={scraping}
               className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50"
             >
-              {scraping ? 'Scraping…' : '🚀 Daten laden (dauert 1–2 Min.)'}
+              {scraping ? 'Scraping läuft…' : '🚀 Jetzt Daten laden'}
             </button>
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <p className="text-xs text-slate-400 mb-4">Oder besuche die Tierheime direkt:</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {[
+                  { name: 'Babenhausen', url: 'https://www.tierheim-babenhausen-hessen.de/tiere/hunde/' },
+                  { name: 'Gelnhausen', url: 'https://tierheim-gelnhausen.org/hunde/' },
+                  { name: 'Hanau', url: 'https://www.tierschutz-hanau.de/tiere/hunde-tierheim.html' },
+                  { name: 'Darmstadt', url: 'https://www.tsv-darmstadt.de/hunde' },
+                ].map(s => (
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                    📍 {s.name} →
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
         {/* Empty: filtered out everything */}
         {!loading && !error && allDogs.length > 0 && filteredDogs.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-4xl mb-3">🔍</div>
-            <p className="text-slate-700 font-semibold mb-2">Keine Ergebnisse für deine Filter</p>
+          <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="text-5xl mb-3">🔍</div>
+            <p className="text-slate-700 font-bold text-lg mb-2">Keine Ergebnisse</p>
+            <p className="text-slate-500 text-sm mb-5">Kein Hund passt zu deinen Filtern. Versuche es mit anderen Kriterien.</p>
             <button
               onClick={() => handleFilterChange({ sort: 'newest' })}
-              className="text-indigo-600 underline text-sm"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors"
             >
               Filter zurücksetzen
             </button>
@@ -198,7 +237,7 @@ function HundePageInner() {
 
         {/* Dog grid */}
         {!loading && filteredDogs.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-fade-in">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDogs.map(dog => (
               <DogCard key={dog.id} dog={dog} />
             ))}

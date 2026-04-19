@@ -2,11 +2,11 @@
 import Link from 'next/link';
 
 const STATUS_CONFIG = {
-  available: { label: 'Sucht Zuhause', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
-  reserved:  { label: 'Reserviert',    color: 'bg-amber-100 text-amber-700',   dot: 'bg-amber-500' },
-  blocked:   { label: 'Interessenten', color: 'bg-orange-100 text-orange-700', dot: 'bg-orange-500' },
-  foster:    { label: 'Pflegestelle',  color: 'bg-sky-100 text-sky-700',       dot: 'bg-sky-500' },
-  sponsor:   { label: 'Pate gesucht',  color: 'bg-violet-100 text-violet-700', dot: 'bg-violet-500' },
+  available: { label: 'Sucht Zuhause',   color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
+  reserved:  { label: 'Reserviert',       color: 'bg-amber-100 text-amber-700',     dot: 'bg-amber-500' },
+  blocked:   { label: 'Interessenten',    color: 'bg-orange-100 text-orange-700',   dot: 'bg-orange-500' },
+  foster:    { label: 'Pflegestelle',     color: 'bg-sky-100 text-sky-700',         dot: 'bg-sky-500' },
+  sponsor:   { label: 'Pate gesucht',     color: 'bg-violet-100 text-violet-700',   dot: 'bg-violet-500' },
 };
 
 export default function DogCard({ dog }) {
@@ -16,15 +16,17 @@ export default function DogCard({ dog }) {
   const facts = [
     dog.breed      && { icon: '🐕', label: dog.breed },
     dog.ageLabel   && { icon: '📅', label: dog.ageLabel },
-    (dog.sex || dog.neuteredStatus) && { icon: '⚥', label: [dog.sex, dog.neuteredStatus].filter(Boolean).join(', ') },
+    dog.sex        && { icon: dog.sex === 'weiblich' ? '♀️' : '♂️', label: dog.sex + (dog.neuteredStatus ? `, ${dog.neuteredStatus}` : '') },
     dog.size       && { icon: '📏', label: dog.size },
-    dog.shelterCity && { icon: '📍', label: dog.shelterCity },
   ].filter(Boolean).slice(0, 4);
 
   return (
-    <Link href={href} className="group dog-card block bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1">
-      {/* Image */}
-      <div className="relative h-52 bg-gradient-to-br from-indigo-50 to-violet-50 overflow-hidden">
+    <Link
+      href={href}
+      className="dog-card group block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+    >
+      {/* ── IMAGE AREA ── */}
+      <div className="relative h-56 bg-gradient-to-br from-indigo-50 to-violet-100 overflow-hidden">
         {dog.image ? (
           <img
             src={dog.image}
@@ -34,35 +36,38 @@ export default function DogCard({ dog }) {
             onError={e => { e.target.style.display = 'none'; }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl opacity-30">🐶</div>
+          <div className="w-full h-full flex items-center justify-center text-7xl opacity-20">🐶</div>
         )}
 
-        {/* Status badge */}
-        <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${s.color} shadow-sm`}>
+        {/* Gradient overlay at bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+
+        {/* Dog name in bottom-left */}
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+          <h3 className="font-extrabold text-xl text-white drop-shadow-lg leading-tight">
+            {dog.name}
+          </h3>
+          {/* Ort badge */}
+          {dog.shelterCity && (
+            <span className="shrink-0 ml-2 flex items-center gap-1 px-2.5 py-1 rounded-full
+              bg-white/25 backdrop-blur-sm text-white text-xs font-semibold border border-white/30">
+              📍 {dog.shelterCity}
+            </span>
+          )}
+        </div>
+
+        {/* Status badge top-left */}
+        <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1
+          rounded-full text-xs font-semibold ${s.color} shadow-sm`}>
           <span className={`w-1.5 h-1.5 rounded-full ${s.dot} pulse-dot`} />
           {s.label}
         </div>
-
-        {/* Shelter badge */}
-        <div className="absolute top-3 right-3 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-xs font-medium">
-          {dog.shelterCity}
-        </div>
       </div>
 
-      {/* Content */}
+      {/* ── CONTENT ── */}
       <div className="p-4">
-        {/* Name */}
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
-            {dog.name}
-          </h3>
-          <span className="text-indigo-600 text-sm font-medium shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            Mehr →
-          </span>
-        </div>
-
-        {/* Shelter */}
-        <p className="text-xs text-slate-500 mb-3 truncate">{dog.shelter}</p>
+        {/* Shelter name */}
+        <p className="text-xs text-indigo-400 font-semibold mb-3 truncate">{dog.shelter}</p>
 
         {/* Facts grid */}
         {facts.length > 0 && (
@@ -78,16 +83,19 @@ export default function DogCard({ dog }) {
 
         {/* Description snippet */}
         {dog.description && (
-          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">
             {dog.description}
           </p>
         )}
 
-        {/* CTA */}
-        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-xs text-slate-400">{dog.postedDate || dog.since || ''}</span>
-          <span className="text-xs font-semibold text-indigo-600 group-hover:underline">
-            Kennenlernen →
+        {/* CTA footer */}
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span className="text-xs text-slate-400">
+            {dog.postedDate || dog.since || ''}
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600
+            group-hover:gap-2 transition-all">
+            Kennenlernen <span className="group-hover:translate-x-0.5 transition-transform">→</span>
           </span>
         </div>
       </div>

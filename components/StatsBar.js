@@ -9,24 +9,24 @@ export default function StatsBar({ dogs, scrapedAt }) {
     : 'wird geladen…';
 
   const stats = [
-    { value: total, label: 'Hunde gesamt', icon: '🐕', color: 'from-indigo-500 to-violet-600' },
-    { value: available, label: 'suchen Zuhause', icon: '🏠', color: 'from-emerald-500 to-teal-600' },
-    { value: shelters, label: 'Tierheime', icon: '📍', color: 'from-amber-500 to-orange-600' },
-    { value: withImages, label: 'mit Foto', icon: '📸', color: 'from-rose-500 to-pink-600' },
+    { value: total,      label: 'Hunde gesamt',   icon: '🐕', color: 'from-indigo-500 to-violet-600' },
+    { value: available,  label: 'suchen Zuhause',  icon: '🏠', color: 'from-emerald-500 to-teal-600' },
+    { value: shelters,   label: 'Tierheime',       icon: '📍', color: 'from-amber-500 to-orange-600' },
+    { value: withImages, label: 'mit Foto',        icon: '📸', color: 'from-rose-500 to-pink-600' },
   ];
 
   return (
-    <section className="bg-white border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <section className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map(s => (
-            <div key={s.label} className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-xl shadow-sm shrink-0`}>
+            <div key={s.label} className="flex items-center gap-3.5">
+              <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center text-lg shadow-sm shrink-0`}>
                 {s.icon}
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-slate-900">{s.value}</div>
-                <div className="text-xs text-slate-500 font-medium">{s.label}</div>
+                <div className="text-2xl font-black text-slate-900 leading-none">{s.value}</div>
+                <div className="text-xs text-slate-500 font-medium mt-0.5">{s.label}</div>
               </div>
             </div>
           ))}

@@ -6,32 +6,35 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg group-hover:shadow-indigo-200 transition-shadow">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg group-hover:shadow-indigo-300 transition-shadow">
               <span className="text-white text-lg">🐾</span>
             </div>
-            <span className="font-extrabold text-xl text-slate-900 tracking-tight">
+            <span className="font-black text-xl text-slate-900 tracking-tight">
               Pet<span className="text-indigo-600">Bridge</span>
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/hunde" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/hunde" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors text-sm">
               Alle Hunde
             </Link>
-            <Link href="/hunde?status=available" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">
+            <Link href="/hunde?status=available" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors text-sm">
               Adoptieren
             </Link>
-            <Link href="/hunde?status=sponsor" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">
+            <Link href="/hunde?status=sponsor" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors text-sm">
               Patenschaft
             </Link>
-            <Link href="/ueber-uns" className="text-slate-600 hover:text-indigo-600 font-medium transition-colors">
-              Über PetBridge
+            <Link
+              href="/spenden"
+              className="flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-semibold transition-colors text-sm"
+            >
+              <span>💚</span> Spenden
             </Link>
           </nav>
 
@@ -39,7 +42,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/hunde"
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition-colors shadow-md shadow-indigo-200"
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-colors shadow-md shadow-indigo-200"
             >
               Hund finden
             </Link>
@@ -61,11 +64,21 @@ export default function Header() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden border-t border-slate-100 py-4 flex flex-col gap-3">
-            <Link href="/hunde" onClick={() => setMenuOpen(false)} className="text-slate-700 font-medium py-2 px-2 rounded-lg hover:bg-slate-50">Alle Hunde</Link>
-            <Link href="/hunde?status=available" onClick={() => setMenuOpen(false)} className="text-slate-700 font-medium py-2 px-2 rounded-lg hover:bg-slate-50">Adoptieren</Link>
-            <Link href="/hunde?status=sponsor" onClick={() => setMenuOpen(false)} className="text-slate-700 font-medium py-2 px-2 rounded-lg hover:bg-slate-50">Patenschaft</Link>
-            <Link href="/hunde" onClick={() => setMenuOpen(false)} className="mt-2 text-center px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold">Hund finden</Link>
+          <div className="md:hidden border-t border-slate-100 py-4 flex flex-col gap-1">
+            <Link href="/hunde" onClick={() => setMenuOpen(false)}
+              className="text-slate-700 font-medium py-2.5 px-3 rounded-xl hover:bg-slate-50">Alle Hunde</Link>
+            <Link href="/hunde?status=available" onClick={() => setMenuOpen(false)}
+              className="text-slate-700 font-medium py-2.5 px-3 rounded-xl hover:bg-slate-50">Adoptieren 🏠</Link>
+            <Link href="/hunde?status=sponsor" onClick={() => setMenuOpen(false)}
+              className="text-slate-700 font-medium py-2.5 px-3 rounded-xl hover:bg-slate-50">Patenschaft ❤️</Link>
+            <Link href="/spenden" onClick={() => setMenuOpen(false)}
+              className="text-emerald-600 font-semibold py-2.5 px-3 rounded-xl hover:bg-emerald-50">💚 Spenden</Link>
+            <div className="mt-2 pt-2 border-t border-slate-100">
+              <Link href="/hunde" onClick={() => setMenuOpen(false)}
+                className="block text-center px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm">
+                🔍 Hund finden
+              </Link>
+            </div>
           </div>
         )}
       </div>

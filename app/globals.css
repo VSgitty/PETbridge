@@ -2,46 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --brand-gradient: linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #4f46e5 100%);
+  --brand-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #24243e 100%);
+  --card-shadow: 0 4px 24px -4px rgba(99,102,241,0.15);
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: #f8fafc;
+  background: #f0f4ff;
   color: #1e293b;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Hero gradient */
+/* ── Hero ── */
 .hero-gradient {
   background: var(--brand-gradient);
+  position: relative;
+}
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(99,102,241,0.18) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(139,92,246,0.15) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-/* Card hover glow */
+/* Paw-print pattern for hero */
+.hero-pattern::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M30 10c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm-8 4c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm16 0c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm-8 6c-6 0-12 5-12 12s6 12 12 12 12-5 12-12-6-12-12-12z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ── Dog card ── */
+.dog-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 .dog-card:hover {
-  box-shadow: 0 0 0 2px #6366f1, 0 20px 40px -12px rgba(99, 102, 241, 0.25);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 0 0 2px #6366f1, 0 24px 48px -12px rgba(99,102,241,0.28);
 }
 
-/* Scrollbar */
+/* ── CTA bubbles ── */
+.cta-bubble {
+  transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease;
+}
+.cta-bubble:hover {
+  transform: scale(1.07);
+}
+
+/* ── Shelter card ── */
+.shelter-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.shelter-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -8px rgba(99,102,241,0.22);
+}
+
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f1f5f9; }
 ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
 
-/* Pulse animation for new badge */
+/* ── Animations ── */
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.35; }
 }
 .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+.float-anim { animation: float 4s ease-in-out infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.6s ease forwards; }
+
+/* ── Section label ── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

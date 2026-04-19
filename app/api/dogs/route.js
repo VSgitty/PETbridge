@@ -11,7 +11,8 @@ export async function GET(request) {
 
   if (forceRefresh || isCacheStale(cache.scrapedAt)) {
     try {
-      const dogs = await scrapeAll();
+      // Pass existing dogs so shelters that fail to scrape keep their cached data
+      const dogs = await scrapeAll(cache.dogs || []);
       cache = await writeCache(dogs);
     } catch (err) {
       console.error('[API/dogs] Scrape failed, serving stale cache:', err.message);
