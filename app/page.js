@@ -9,16 +9,16 @@ import { ALL_SHELTERS } from '@/lib/shelterConfig';
 
 export const revalidate = 3600;
 
-/** Fetch Wikipedia thumbnail for a single city (German Wikipedia). */
+/** Fetch Wikipedia thumbnail for a single city (English Wikipedia – shows panoramas, not Wappen). */
 async function getCityThumbnail(wikiTitle) {
   try {
     const res = await fetch(
-      `https://de.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`,
       { next: { revalidate: 86400 } }
     );
     if (!res.ok) return null;
     const data = await res.json();
-    return data?.thumbnail?.source || null;
+    return data?.originalimage?.source || data?.thumbnail?.source || null;
   } catch {
     return null;
   }
