@@ -3,53 +3,30 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DogCard from '@/components/DogCard';
 import StatsBar from '@/components/StatsBar';
-import { readCache } from '@/lib/cache';
+import { readCache, writeCache, isCacheStale } from '@/lib/cache';
+import { scrapeAll } from '@/lib/scrapers/index';
+import { ALL_SHELTERS } from '@/lib/shelterConfig';
 
 export const revalidate = 3600;
 
 async function getDogs() {
   try {
-    const cache = await readCache();
+    let cache = await readCache().catch(() => ({ dogs: [], scrapedAt: null }));
+    // If cache is empty or stale, run a live scrape now
+    if (!cache.dogs?.length || isCacheStale(cache.scrapedAt)) {
+      const dogs = await scrapeAll(cache.dogs || []);
+      if (dogs.length > 0) {
+        cache = await writeCache(dogs).catch(() => ({ dogs, scrapedAt: new Date().toISOString() }));
+      }
+    }
     return cache;
-  } catch {
+  } catch (err) {
+    console.error('[page getDogs]', err.message);
     return { dogs: [], scrapedAt: null };
   }
 }
 
-const SHELTERS = [
-  {
-    name: 'Tierheim Babenhausen',
-    city: 'Babenhausen',
-    url: 'https://www.tierheim-babenhausen-hessen.de/tiere/hunde/',
-    phone: '06073 / 72 37 1',
-    emoji: '🏡',
-    color: 'from-indigo-500 to-violet-600',
-  },
-  {
-    name: 'Tierheim Gelnhausen',
-    city: 'Gelnhausen',
-    url: 'https://tierheim-gelnhausen.org/hunde/',
-    phone: '06051 / 2550',
-    emoji: '🌿',
-    color: 'from-emerald-500 to-teal-600',
-  },
-  {
-    name: 'Tierschutz Hanau',
-    city: 'Hanau',
-    url: 'https://www.tierschutz-hanau.de/tiere/hunde-tierheim.html',
-    phone: '06181 / 92 12 35',
-    emoji: '🌻',
-    color: 'from-amber-500 to-orange-600',
-  },
-  {
-    name: 'TSV Darmstadt',
-    city: 'Darmstadt',
-    url: 'https://www.tsv-darmstadt.de/hunde',
-    phone: '',
-    emoji: '💜',
-    color: 'from-rose-500 to-pink-600',
-  },
-];
+// ALL_SHELTERS is imported from shelterConfig above — no local const needed
 
 export default async function HomePage() {
   const { dogs, scrapedAt } = await getDogs();
@@ -97,7 +74,7 @@ export default async function HomePage() {
             Dein bester Freund wartet auf dich.
           </p>
           <p className="text-base text-indigo-300/90 max-w-2xl mx-auto mb-14 leading-relaxed">
-            Alle Hunde aus {SHELTERS.length} Tierheimen in Rhein-Main — mit Fotos, Profilen
+            Alle Hunde aus {ALL_SHELTERS.length} Tierheimen in Hessen — mit Fotos, Profilen
             und dem direkten Weg zur Vermittlung. Täglich aktuell.
           </p>
 
@@ -170,14 +147,14 @@ export default async function HomePage() {
             <span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" />
             &nbsp;Unsere Tierheim-Partner
           </p>
-          <h2 className="text-3xl font-extrabold text-slate-900">4 Tierheime, eine Plattform</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900">{ALL_SHELTERS.length} Tierheime, eine Plattform</h2>
           <p className="text-slate-500 mt-2 max-w-xl mx-auto text-sm">
-            Alle Hunde direkt aus den offiziellen Tierheimen — täglich synchronisiert.
+            Alle Hunde direkt aus offiziellen hessischen Tierheimen — täglich synchronisiert.
             Klicke auf ein Tierheim, um alle dortigen Hunde zu sehen oder die Website direkt zu besuchen.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {SHELTERS.map(s => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {ALL_SHELTERS.map(s => {
             const count = dogs.filter(d => d.shelterCity === s.city).length;
             return (
               <div key={s.city} className="shelter-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -209,7 +186,7 @@ export default async function HomePage() {
                       </Link>
                     )}
                     <a
-                      href={s.url}
+                      href={s.shelterUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 text-center py-2 rounded-xl border border-slate-200 text-slate-600

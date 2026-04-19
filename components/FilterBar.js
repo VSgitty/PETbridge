@@ -1,12 +1,10 @@
 'use client';
 import { useState } from 'react';
+import { ALL_SHELTERS } from '@/lib/shelterConfig';
 
 const SHELTERS = [
   { value: '', label: 'Alle Tierheime' },
-  { value: 'Gelnhausen', label: 'Tierheim Gelnhausen' },
-  { value: 'Hanau', label: 'Tierschutz Hanau' },
-  { value: 'Babenhausen', label: 'Tierheim Babenhausen' },
-  { value: 'Darmstadt', label: 'TSV Darmstadt' },
+  ...ALL_SHELTERS.map(s => ({ value: s.city, label: s.name })),
 ];
 
 const GENDERS = [
